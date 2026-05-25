@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Wrench, Package, ShoppingCart, Building2 } from "lucide-react";
+import { LayoutDashboard, Users, Wrench, Package, ShoppingCart, Building2, ClipboardCheck } from "lucide-react";
 import StoreSwitcher from "./StoreSwitcher";
 
 const links = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/customers", label: "Customers", icon: Users },
   { href: "/tickets", label: "Repair Tickets", icon: Wrench },
+  { href: "/checkin", label: "Check-In", icon: ClipboardCheck },
   { href: "/inventory", label: "Inventory", icon: Package },
   { href: "/pos", label: "Point of Sale", icon: ShoppingCart },
 ];
