@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Same models as schema.prisma but for PostgreSQL
+
+model Store {
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String?
+  phone     String?
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customers     Customer[]
+  tickets       RepairTicket[]
+  inventoryItems InventoryItem[]
+  sales         Sale[]
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  storeId   Int
+  store     Store    @relation(fields: [storeId], references: [id])
+  name      String
+  email     String?
+  phone     String
+  address   String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tickets   RepairTicket[]
+  sales     Sale[]
+}
+
+model RepairTicket {
+  id           Int      @id @default(autoincrement())
+  storeId      Int
+  store        Store    @relation(fields: [storeId], references: [id])
+  ticketNumber String   @default("TKT-0000")
+  customerId   Int
+  customer     Customer @relation(fields: [customerId], references: [id])
+  deviceName   String
+  deviceModel  String?
+  serialNumber String?
+  issue        String
+  status       String   @default("PENDING")
+  cost         Float    @default(0)
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model InventoryItem {
+  id          Int      @id @default(autoincrement())
+  storeId     Int
+  store       Store    @relation(fields: [storeId], references: [id])
+  name        String
+  sku         String
+  category    String?
+  quantity    Int      @default(0)
+  price       Float    @default(0)
+  cost        Float    @default(0)
+  description String?
+  minStock    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  saleItems   SaleItem[]
+
+  @@unique([storeId, sku])
+}
+
+model Sale {
+  id         Int      @id @default(autoincrement())
+  storeId    Int
+  store      Store    @relation(fields: [storeId], references: [id])
+  saleNumber String   @default("SALE-0000")
+  customerId Int?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  total      Float    @default(0)
+  payment    String   @default("CASH")
+  status     String   @default("COMPLETED")
+  createdAt  DateTime @default(now())
+
+  items      SaleItem[]
+}
+
+model SaleItem {
+  id        Int           @id @default(autoincrement())
+  saleId    Int
+  sale      Sale          @relation(fields: [saleId], references: [id])
+  itemId    Int
+  item      InventoryItem @relation(fields: [itemId], references: [id])
+  quantity  Int           @default(1)
+  price     Float         @default(0)
+  subtotal  Float         @default(0)
+}
