@@ -10,8 +10,7 @@ function createClient(): PrismaClient {
 
   if (url.startsWith("postgresql")) {
     const { PrismaNeon } = require("@prisma/adapter-neon");
-    const { neon } = require("@neondatabase/serverless");
-    return new PrismaClient({ adapter: new PrismaNeon({ sql: neon(url) }) });
+    return new PrismaClient({ adapter: new PrismaNeon({ connectionString: url }) });
   }
 
   const { PrismaLibSql } = require("@prisma/adapter-libsql");
