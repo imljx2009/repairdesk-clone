@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Minus, Trash2, ShoppingCart, Search } from "lucide-react";
+import { Plus, Minus, Trash2, ShoppingCart, Search, Printer } from "lucide-react";
 import { useStore } from "@/lib/store-context";
 
 interface Customer { id: number; name: string; phone: string; }
@@ -140,13 +140,49 @@ export default function POSPage() {
       </div>
       {showReceipt && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-sm text-center">
-            <div className="text-4xl mb-2">✓</div>
-            <h2 className="text-lg font-bold mb-1">Payment Successful</h2>
-            <p className="text-sm text-slate-500 mb-4">{showReceipt.saleNumber}</p>
-            <p className="text-3xl font-bold mb-4">${showReceipt.total.toFixed(2)}</p>
-            <p className="text-sm text-slate-500 mb-6">Paid via {showReceipt.payment}</p>
-            <button onClick={() => setShowReceipt(null)} className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700">Done</button>
+          <div className="bg-white rounded-xl p-6 w-full max-w-sm">
+            <div id="receipt-content" className="text-sm">
+              <div className="text-center border-b pb-3 mb-3">
+                <h2 className="font-bold text-lg">RepairDesk</h2>
+                <p className="text-xs text-slate-500">Receipt</p>
+              </div>
+              <div className="flex justify-between mb-1">
+                <span className="text-slate-500">Receipt #</span>
+                <span className="font-mono">{showReceipt.saleNumber}</span>
+              </div>
+              <div className="flex justify-between mb-1">
+                <span className="text-slate-500">Date</span>
+                <span>{new Date(showReceipt.createdAt).toLocaleDateString()}</span>
+              </div>
+              <div className="flex justify-between mb-3">
+                <span className="text-slate-500">Payment</span>
+                <span>{showReceipt.payment}</span>
+              </div>
+              <div className="border-t pt-2 mb-2">
+                <div className="flex justify-between font-medium text-xs text-slate-500 mb-1">
+                  <span className="flex-[2]">Item</span>
+                  <span className="w-16 text-center">Qty</span>
+                  <span className="w-20 text-right">Price</span>
+                </div>
+                {(showReceipt as any).items?.map((i: any) => (
+                  <div key={i.id} className="flex justify-between py-1 border-b border-dashed text-sm">
+                    <span className="flex-[2]">{i.item?.name || i.itemId}</span>
+                    <span className="w-16 text-center">{i.quantity}</span>
+                    <span className="w-20 text-right">${Number(i.subtotal).toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex justify-between font-bold text-base pt-2 border-t">
+                <span>Total</span>
+                <span>${Number(showReceipt.total).toFixed(2)}</span>
+              </div>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <button onClick={() => { window.print(); }} className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center justify-center gap-2">
+                <Printer size={16} /> Print
+              </button>
+              <button onClick={() => setShowReceipt(null)} className="flex-1 bg-slate-200 py-2 rounded-lg text-sm font-medium hover:bg-slate-300">Done</button>
+            </div>
           </div>
         </div>
       )}
