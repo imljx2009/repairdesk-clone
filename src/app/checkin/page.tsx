@@ -84,38 +84,31 @@ export default function CheckInPage() {
     setLoading(true);
 
     try {
-      const storeId = store?.id || 1;
-      const sid = String(storeId);
+      const sid = String(store?.id || 1);
 
-      // 1. Create customer
-      const customerRes = await fetch("/api/customers", {
+      const res = await fetch("/api/checkin", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-store-id": sid },
         body: JSON.stringify({
-          name: `${form.firstName.trim()} ${form.lastName.trim()}`,
-          email: form.email.trim() || null,
+          firstName: form.firstName.trim(),
+          lastName: form.lastName.trim(),
           phone: form.phone.trim(),
+          email: form.email.trim(),
+          brand: form.brand,
+          deviceType: form.deviceType,
+          model: form.model.trim(),
+          serial: form.serial.trim(),
+          colour: form.colour.trim(),
+          problemDesc: form.problemDesc.trim(),
+          urgency: form.urgency,
+          chips: form.chips,
         }),
       });
-      const customer = await customerRes.json();
 
-      // 2. Create repair ticket
-      const ticketRes = await fetch("/api/tickets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-store-id": sid },
-        body: JSON.stringify({
-          customerId: customer.id,
-          deviceName: `${form.brand} ${form.model}`,
-          deviceModel: form.model,
-          serialNumber: form.serial || null,
-          issue: `[${form.deviceType}] ${form.problemDesc}\nIssues: ${form.chips.join(", ")}${form.urgency ? `\nUrgency: ${form.urgency}` : ""}`,
-          cost: 0,
-          notes: `Colour: ${form.colour || "N/A"}`,
-        }),
-      });
-      const ticket = await ticketRes.json();
+      if (!res.ok) throw new Error("Submission failed");
+      const data = await res.json();
 
-      setJobRef(ticket.ticketNumber);
+      setJobRef(data.ticketNumber);
       setDone(true);
       setStep(0);
     } catch (e) {

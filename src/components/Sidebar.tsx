@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Wrench, Package, ShoppingCart, Building2, ClipboardCheck } from "lucide-react";
+import { LayoutDashboard, Users, Wrench, Package, ShoppingCart, Building2, ClipboardCheck, LogOut } from "lucide-react";
 import StoreSwitcher from "./StoreSwitcher";
+import { useAuth } from "@/lib/auth-context";
 
 const links = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -16,6 +17,7 @@ const links = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
 
   return (
     <aside className="w-64 bg-slate-800 text-white flex flex-col min-h-screen">
@@ -44,7 +46,14 @@ export default function Sidebar() {
           );
         })}
       </nav>
-      <div className="p-3 border-t border-slate-700">
+      <div className="p-3 border-t border-slate-700 space-y-2">
+        {user && (
+          <div className="px-3 py-2 text-xs text-slate-400">
+            <p className="font-medium text-slate-300">{user.name}</p>
+            <p className="truncate">{user.email}</p>
+            <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-slate-700 text-[10px] uppercase tracking-wider">{user.role}</span>
+          </div>
+        )}
         <Link
           href="/stores"
           className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
@@ -56,6 +65,13 @@ export default function Sidebar() {
           <Building2 size={18} />
           Manage Stores
         </Link>
+        <button
+          onClick={logout}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-red-700/30 hover:text-red-300 transition-colors w-full"
+        >
+          <LogOut size={18} />
+          Sign Out
+        </button>
       </div>
     </aside>
   );
