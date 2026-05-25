@@ -1,4 +1,4 @@
 {
   "installCommand": "npm install",
-  "buildCommand": "next build"
+  "buildCommand": "npx prisma db push && next build"
 }
