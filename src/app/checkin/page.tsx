@@ -26,7 +26,7 @@ const chips = [
 const defaultForm = {
   firstName: "", lastName: "", phone: "", email: "",
   brand: "", deviceType: "", model: "", serial: "", colour: "",
-  problemDesc: "", urgency: "", chips: [] as string[],
+  problemDesc: "", urgency: "", chips: [] as string[], agreed: false,
 };
 
 export default function CheckInPage() {
@@ -64,6 +64,7 @@ export default function CheckInPage() {
       if (!form.model.trim()) errs.model = "Please enter the device model";
     } else if (s === 3) {
       if (form.problemDesc.trim().length < 10) errs.problemDesc = "Please describe the problem (at least 10 characters)";
+      if (!form.agreed) errs.agreed = "You must agree to the terms to proceed";
     }
 
     setErrors(errs);
@@ -345,6 +346,21 @@ export default function CheckInPage() {
                 <option>I'm flexible</option>
               </select>
             </div>
+
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.agreed}
+                onChange={(e) => update("agreed", e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded border-[#e0e0e8] text-[#f69323] focus:ring-[#f69323]"
+              />
+              <span className="text-xs text-[#6b6b80] leading-relaxed">
+                I confirm that the information provided is accurate, and I agree to the{" "}
+                <span className="text-[#f69323] underline decoration-dotted">Terms &amp; Conditions</span> and{" "}
+                <span className="text-[#f69323] underline decoration-dotted">Privacy Policy</span>. I understand that data backup is recommended prior to any repair.
+              </span>
+            </label>
+            <Err field="agreed" />
 
             <div className="flex justify-between mt-7">
               <button onClick={prev} className="bg-transparent border border-[#e0e0e8] rounded-xl text-[#6b6b80] font-medium px-5 py-3 text-sm hover:border-[#6b6b80] hover:text-black transition-all">← Back</button>
